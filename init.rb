@@ -66,7 +66,7 @@ module Checks
   def dns_cname?(app_name)
     api.get_domains(app_name).body.map {|d| d["domain"]}.all? do |dname|
       Dns.cnames(dname).all? do |cname|
-        cname.include?("herokuapp.com")
+        cname.include?("herokuapp.com") or cname.include?("herokussl.com")
       end
     end
   end

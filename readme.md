@@ -10,7 +10,7 @@ $ heroku plugins:install git@github.com:heroku/heroku-production-check.git
 
 ### Usage
 
-```bash
+```
 $ heroku production:check -a vault
 === Production check for vault
 Cedar                         Passsed

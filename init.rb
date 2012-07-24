@@ -54,6 +54,7 @@ module Checks
   end
 
   def dyno_redundancy?(app_name)
+    if web_dynos(app_name).empty?
     web_dynos(app_name).length >= 2
   end
 
@@ -84,7 +85,7 @@ module Checks
   def dns_cname?(app_name)
     return nil unless web_app?(app_name)
     domain_names(app_name).all? do |dname|
-      Dns.cnames(dname).all? {|cname| VALID_HOSTNAMES.include?(cname)}
+      Dns.cnames(dname).all? {|cname| Dns::VALID_HOSTNAMES.include?(cname)}
     end
   end
 

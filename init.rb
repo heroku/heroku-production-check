@@ -3,7 +3,7 @@ require 'resolv'
 module Heroku
   module Helpers
     def run_check(message, options={})
-      display("#{message}... ", false)
+      display("#{message}".ljust(30), false)
       ret = yield
       if ret
         display("Passsed", false)
@@ -37,6 +37,12 @@ module Checks
 
   HEROKU_DOMAINS = ["herokuapp.com", "herokussl.com", "heroku-shadowapp.com", "heroku-shadowssl.com"]
 
+  # Attempt to access dynos of the app.
+  # If the current user does not have access to the app,
+  # an error message will be displayed.
+  def can_access?(app_name)
+    web_dynos(app_name)
+  end
 
   def domain_names(app_name)
     api.get_domains(app_name).body.map {|d| d["domain"]}
@@ -105,13 +111,16 @@ class Heroku::Command::Production < Heroku::Command::Base
   include Checks
 
   def check
-    run_check("Checking Cedar") {cedar?(app)}
-    run_check("Dyno Redundancy") {dyno_redundancy?(app)}
-    run_check("Production Database") {prod_db?(app)}
-    run_check("Follower Database") {follower_db?(app)}
-    run_check("SSL Endpoint") {ssl_endpoint?(app)}
-    run_check("DNS Configuration") {dns_cname?(app)}
-    run_check("Log Drains") {log_drains?(app)}
+    display("=== Production check for #{app}")
+    if can_access?(app)
+      run_check("Cedar") {cedar?(app)}
+      run_check("Dyno Redundancy") {dyno_redundancy?(app)}
+      run_check("Production Database") {prod_db?(app)}
+      run_check("Follower Database") {follower_db?(app)}
+      run_check("SSL Endpoint") {ssl_endpoint?(app)}
+      run_check("DNS Configuration") {dns_cname?(app)}
+      run_check("Log Drains") {log_drains?(app)}
+    end
   end
 
 end

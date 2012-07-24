@@ -20,8 +20,7 @@ end
 
 module Dns
   extend self
-  VALID_HOSTNAMES = ["herokuapp.com", "herokussl.com",
-    "heroku-shadowapp.com", "heroku-shadowssl.com"]
+  VALID_HOSTNAMES = ["herokuapp.com", "herokussl.com", "heroku-shadowapp.com", "heroku-shadowssl.com"]
 
   def cnames(dname)
     col = []
@@ -54,7 +53,6 @@ module Checks
   end
 
   def dyno_redundancy?(app_name)
-    if web_dynos(app_name).empty?
     web_dynos(app_name).length >= 2
   end
 

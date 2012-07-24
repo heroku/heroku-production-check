@@ -11,12 +11,13 @@ $ heroku plugins:install git@github.com:heroku/production-check.git
 ### Usage
 
 ```bash
-$ heroku sudo production:check -a shushu
-Checking Cedar... OK
-Dyno Redundancy... OK
-Production Database... OK
-Follower Database... OK
-SSL Endpoint... Failed
-DNS Configuration... OK
-Log Drains... OK
+$ heroku production:check -a vault
+=== Production check for vault
+Cedar                         Passsed
+Dyno Redundancy               Passsed
+Production Database           Failed
+Follower Database             Failed
+SSL Endpoint                  Passsed
+DNS Configuration             Passsed
+Log Drains                    Passsed
 ```

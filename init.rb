@@ -6,9 +6,11 @@ module Heroku
       display("#{message}... ", false)
       ret = yield
       if ret
-        display("OK", false)
-      else
+        display("Passsed", false)
+      elsif ret == false
         display("Failed", false)
+      else
+        display("Skipped", false)
       end
       display
       ret
@@ -37,10 +39,15 @@ module Checks
     api.get_app(app_name).body["stack"] == "cedar"
   end
 
-  def dyno_redundancy?(app_name)
+
+  def web_dynos(app_name)
     api.get_ps(app_name).body.select do |ps|
       ps["process"].include?("web")
-    end.length >= 2
+    end
+  end
+
+  def dyno_redundancy?(app_name)
+    web_dynos(app_name).length >= 2
   end
 
   def heroku_pgdb(app_name)
@@ -57,13 +64,19 @@ module Checks
     heroku_pgdb(app_name).length >= 2
   end
 
+  def web_app(app_name)
+    web_dynos(app_name).length >= 1
+  end
+
   def ssl_endpoint?(app_name)
+    return nil unless web_app?(app_name)
     api.get_addons(app_name).body.select do |ao|
       ao["name"].include?("ssl:endpoint")
     end.length >= 1
   end
 
   def dns_cname?(app_name)
+    return nil unless web_app?(app_name)
     api.get_domains(app_name).body.map {|d| d["domain"]}.all? do |dname|
       Dns.cnames(dname).all? do |cname|
         cname.include?("herokuapp.com") or cname.include?("herokussl.com")

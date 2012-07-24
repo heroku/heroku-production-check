@@ -1,4 +1,5 @@
 require 'resolv'
+require 'uri'
 
 module Heroku
   module Helpers
@@ -56,7 +57,8 @@ module Checks
 
   def heroku_pgdb(app_name)
     api.get_addons(app_name).body.select do |ao|
-      ao["name"].include?("heroku-postgresql")
+      ao["name"].include?("heroku-postgresql") &&
+        !ao["name"].include?("dev")
     end
   end
 
@@ -68,12 +70,35 @@ module Checks
     api.get_app(app_name).body["stack"] == "cedar"
   end
 
+  def database_url(app_name)
+    api.get_config_vars(app_name).body["DATABASE_URL"]
+  end
+
+  def postgres_urls(app_name)
+    api.get_config_vars(app_name).body.select do |k,v|
+      k.downcase.include?("heroku_postgres")
+    end
+  end
+
+  # Skip check if there is not DATABASE_URL set on the app.
+  # Otherweise we will check to see if a Heroku PostgreSQL prod db is installed.
   def prod_db?(app_name)
+    return nil unless database_url(app_name)
     heroku_pgdb(app_name).length >= 1
   end
 
+  # Follower databases have the same username, password, and database name.
+  # The only difference between a follower url and a master url is the host.
+  # Skip if the app doesn't have a database_url set in the config.
   def follower_db?(app_name)
-    heroku_pgdb(app_name).length >= 2
+    return nil unless database_url(app_name)
+    uri = URI.parse(database_url(app_name))
+    postgres_urls(app_name).select do |name, url|
+      tmp_uri = URI.parse(url)
+      [:user, :password, :path].all? do |k|
+        uri.send(k) == tmp_uri.send(k)
+      end
+    end.length >= 2
   end
 
   def web_app?(app_name)

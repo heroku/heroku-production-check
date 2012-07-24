@@ -20,7 +20,6 @@ end
 
 module Dns
   extend self
-  VALID_HOSTNAMES = ["herokuapp.com", "herokussl.com", "heroku-shadowapp.com", "heroku-shadowssl.com"]
 
   def cnames(dname)
     col = []
@@ -35,6 +34,9 @@ end
 
 module Checks
   extend self
+
+  HEROKU_DOMAINS = ["herokuapp.com", "herokussl.com", "heroku-shadowapp.com", "heroku-shadowssl.com"]
+
 
   def domain_names(app_name)
     api.get_domains(app_name).body.map {|d| d["domain"]}
@@ -83,7 +85,13 @@ module Checks
   def dns_cname?(app_name)
     return nil unless web_app?(app_name)
     domain_names(app_name).all? do |dname|
-      Dns.cnames(dname).all? {|cname| Dns::VALID_HOSTNAMES.include?(cname)}
+      if HEROKU_DOMAINS.any?{|hd| dname.include?(hd)}
+        true
+      else
+        Dns.cnames(dname).all? do |cname|
+          HEROKU_DOMAINS.any? {|hd| cname.include?(hd)}
+        end
+      end
     end
   end
 

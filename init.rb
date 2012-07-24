@@ -64,7 +64,7 @@ module Checks
     heroku_pgdb(app_name).length >= 2
   end
 
-  def web_app(app_name)
+  def web_app?(app_name)
     web_dynos(app_name).length >= 1
   end
 

@@ -3,13 +3,13 @@ require 'uri'
 
 module Heroku
   module Helpers
-    def run_check(message, options={})
+    def run_check(message, fix_url, options={})
       display("#{message}".ljust(30), false)
       ret = yield
       if ret
         display("Passsed", false)
       elsif ret == false
-        display("Failed", false)
+        display("Failed \t remedy: #{fix_url}", false)
       else
         display("Skipped", false)
       end
@@ -138,13 +138,13 @@ class Heroku::Command::Production < Heroku::Command::Base
   def check
     display("=== Production check for #{app}")
     if can_access?(app)
-      run_check("Cedar") {cedar?(app)}
-      run_check("Dyno Redundancy") {dyno_redundancy?(app)}
-      run_check("Production Database") {prod_db?(app)}
-      run_check("Follower Database") {follower_db?(app)}
-      run_check("SSL Endpoint") {ssl_endpoint?(app)}
-      run_check("DNS Configuration") {dns_cname?(app)}
-      run_check("Log Drains") {log_drains?(app)}
+      run_check("Cedar", "http://bit.ly/NIMhag") {cedar?(app)}
+      run_check("Dyno Redundancy","http://bit.ly/SSHYev"){dyno_redundancy?(app)}
+      run_check("Production Database", "http://bit.ly/PWsbrJ") {prod_db?(app)}
+      run_check("Follower Database", "http://bit.ly/MGsk39") {follower_db?(app)}
+      run_check("SSL Endpoint", "http://bit.ly/PfzI7x") {ssl_endpoint?(app)}
+      run_check("DNS Configuration", "http://bit.ly/PfzI7x") {dns_cname?(app)}
+      run_check("Log Drains", "http://bit.ly/MGtYSq") {log_drains?(app)}
     end
   end
 

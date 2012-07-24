@@ -15,8 +15,8 @@ $ heroku production:check -a vault
 === Production check for vault
 Cedar                         Passsed
 Dyno Redundancy               Passsed
-Production Database           Failed
-Follower Database             Failed
+Production Database           Failed 	 remedy: http://bit.ly/PWsbrJ
+Follower Database             Failed 	 remedy: http://bit.ly/MGsk39
 SSL Endpoint                  Passsed
 DNS Configuration             Passsed
 Log Drains                    Passsed

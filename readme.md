@@ -5,7 +5,7 @@
 ### Setup
 
 ```bash
-$ heroku plugins:install git@github.com:heroku/production-check.git
+$ heroku plugins:install git@github.com:heroku/heroku-production-check.git
 ```
 
 ### Usage

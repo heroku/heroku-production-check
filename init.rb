@@ -7,7 +7,7 @@ module Heroku
       display("#{message}".ljust(30), false)
       ret = yield
       if ret
-        display("Passsed", false)
+        display("Passed", false)
       elsif ret == false
         display("Failed \t remedy: #{fix_url}", false)
       else

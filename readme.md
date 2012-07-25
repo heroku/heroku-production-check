@@ -13,11 +13,11 @@ $ heroku plugins:install git@github.com:heroku/heroku-production-check.git
 ```
 $ heroku production:check -a vault
 === Production check for vault
-Cedar                         Passsed
-Dyno Redundancy               Passsed
+Cedar                         Passed
+Dyno Redundancy               Passed
 Production Database           Failed 	 remedy: http://bit.ly/PWsbrJ
 Follower Database             Failed 	 remedy: http://bit.ly/MGsk39
-SSL Endpoint                  Passsed
-DNS Configuration             Passsed
-Log Drains                    Passsed
+SSL Endpoint                  Passed
+DNS Configuration             Passed
+Log Drains                    Passed
 ```

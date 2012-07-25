@@ -141,8 +141,6 @@ end
 # check the production status of an app
 #
 class Heroku::Command::Production < Heroku::Command::Base
-
-
   include Checks
 
   # check

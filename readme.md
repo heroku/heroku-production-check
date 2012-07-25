@@ -4,13 +4,13 @@ A Heroku client plugin to check how well your app meets Heroku's [guidlines for 
 
 ### Setup
 
-```bash
+```
 $ heroku plugins:install https://github.com/heroku/heroku-production-check.git
 ```
 
 ### Usage
 
-```bash
+```
 $ heroku production:check -a vault
 === Production check for vault
 Cedar                         Passed

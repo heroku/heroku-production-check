@@ -1,6 +1,6 @@
 # Heroku App Production Check
 
-[Devcenter Artcile](https://devcenter.heroku.com/articles/maximizing-availability)
+A Heroku client plugin to check how well your app meets Heroku's [guidlines for maximizing app availability](https://devcenter.heroku.com/articles/maximizing-availability).
 
 ### Setup
 

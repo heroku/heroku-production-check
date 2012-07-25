@@ -66,7 +66,7 @@ module Checks
     api.get_ps(app_name).body.reject do |ps|
       ps["process"] =~ /run\.\d+/
     end.group_by do |ps|
-      ps["process"]
+      ps["process"].split(".")[0]
     end.all? do |process, col|
       col.length >= 2
     end

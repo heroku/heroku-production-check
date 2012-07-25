@@ -31,12 +31,22 @@ module Dns
     col.flatten
   end
 
+  def a_records(dname)
+    col = []
+    Resolv::DNS.open do |dns|
+      res = dns.getresources(dname, Resolv::DNS::Resource::IN::A)
+      col << res.map {|r| r.address.to_s}
+    end
+    col.flatten
+  end
+
 end
 
 module Checks
   extend self
 
   HEROKU_DOMAINS = ["herokuapp.com", "herokussl.com", "heroku-shadowapp.com", "heroku-shadowssl.com"]
+  HEROKU_IPS = ["75.101.145.87", "75.101.163.44", "174.129.212.2", "50.16.232.130", "50.16.215.196"]
 
   # Attempt to access dynos of the app.
   # If the current user does not have access to the app,
@@ -132,6 +142,17 @@ module Checks
     end
   end
 
+  def dns_a_record?(app_name)
+    return nil unless web_app?(app_name)
+    domain_names(app_name).all? do |dname|
+      Dns.a_records(dname).none? {|ip| HEROKU_IPS.include?(ip)}
+    end
+  end
+
+  def dns?(app_name)
+    dns_cname?(app_name) && dns_a_record?(app_name)
+  end
+
   def log_drains?(app_name)
     !heroku.list_drains(app_name).body.include?("No")
   end
@@ -154,7 +175,7 @@ class Heroku::Command::Production < Heroku::Command::Base
       run_check("Production Database", "http://bit.ly/PWsbrJ") {prod_db?(app)}
       run_check("Follower Database", "http://bit.ly/MGsk39") {follower_db?(app)}
       run_check("SSL Endpoint", "http://bit.ly/PfzI7x") {ssl_endpoint?(app)}
-      run_check("DNS Configuration", "http://bit.ly/PfzI7x") {dns_cname?(app)}
+      run_check("DNS Configuration", "http://bit.ly/PfzI7x") {dns?(app)}
       run_check("Log Drains", "http://bit.ly/MGtYSq") {log_drains?(app)}
     end
   end

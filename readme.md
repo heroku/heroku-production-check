@@ -5,7 +5,7 @@ A Heroku client plugin to check how well your app meets Heroku's [guidlines for 
 ### Setup
 
 ```bash
-$ heroku plugins:install git@github.com:heroku/heroku-production-check.git
+$ heroku plugins:install https://github.com/heroku/heroku-production-check.git
 ```
 
 ### Usage

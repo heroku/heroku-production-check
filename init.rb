@@ -138,9 +138,16 @@ module Checks
 
 end
 
+# check the production status of an app
+#
 class Heroku::Command::Production < Heroku::Command::Base
+
+
   include Checks
 
+  # check
+  #
+  # check the production status of an app
   def check
     display("=== Production check for #{app}")
     if can_access?(app)

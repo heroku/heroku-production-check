@@ -73,13 +73,7 @@ module Checks
   end
 
   def dyno_redundancy?(app_name)
-    api.get_ps(app_name).body.reject do |ps|
-      ps["process"] =~ /run\.\d+/
-    end.group_by do |ps|
-      ps["process"].split(".")[0]
-    end.all? do |process, col|
-      col.length >= 2
-    end
+    web_dynos(app_name).length >= 2
   end
 
   def cedar?(app_name)

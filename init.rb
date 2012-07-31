@@ -124,19 +124,21 @@ module Checks
     end.length >= 1
   end
 
+  # Returns true if the app's CNAME records do _not_ point at
+  # proxy.heroku.com.
   def dns_cname?(app_name)
     return nil unless web_app?(app_name)
     domain_names(app_name).all? do |dname|
       if HEROKU_DOMAINS.any?{|hd| dname.include?(hd)}
         true
       else
-        Dns.cnames(dname).all? do |cname|
-          HEROKU_DOMAINS.any? {|hd| cname.include?(hd)}
-        end
+        Dns.cnames(dname).none? {|c| c == "proxy.heroku.com"}
       end
     end
   end
 
+  # Returns true if the app's A records do _not_ point at Heroku's
+  # public IPs
   def dns_a_record?(app_name)
     return nil unless web_app?(app_name)
     domain_names(app_name).all? do |dname|

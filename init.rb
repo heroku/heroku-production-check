@@ -68,7 +68,8 @@ module Checks
   def heroku_pgdb(app_name)
     api.get_addons(app_name).body.select do |ao|
       ao["name"].include?("heroku-postgresql") &&
-        !ao["name"].include?("dev")
+        !ao["name"].include?("dev") &&
+        !ao["name"].include?("basic")
     end
   end
 

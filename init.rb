@@ -74,7 +74,7 @@ module Checks
   end
 
   def dyno_redundancy?(app_name)
-    web_dynos(app_name).length >= 2
+    web_dynos(app_name).length != 1
   end
 
   def cedar?(app_name)

@@ -31,11 +31,12 @@ module Dns
     col.flatten
   end
 
-  def a_records(dname)
+  def aliases(dname)
     col = []
     Resolv::DNS.open do |dns|
-      res = dns.getresources(dname, Resolv::DNS::Resource::IN::A)
-      col << res.map {|r| r.address.to_s}
+      res = dns.getresources(dname, Resolv::DNS::Resource::IN::TXT)
+      ars = res.select {|r| r.data.start_with? "ALIAS for "}
+      col << ars.map {|r| r.data.split(" for ").last}
     end
     col.flatten
   end
@@ -57,6 +58,10 @@ module Checks
 
   def domain_names(app_name)
     api.get_domains(app_name).body.map {|d| d["domain"]}
+  end
+
+  def custom_domain_names(app_name)
+    domain_names(app_name).select{|dname| custom?(dname)}
   end
 
   def web_dynos(app_name)
@@ -132,30 +137,25 @@ module Checks
     end.length >= 1
   end
 
-  # Returns true if the app's CNAME records do _not_ point at
-  # proxy.heroku.com.
-  def dns_cname?(app_name)
-    return nil unless web_app?(app_name)
-    domain_names(app_name).all? do |dname|
-      if HEROKU_DOMAINS.any?{|hd| dname.include?(hd)}
-        true
-      else
-        Dns.cnames(dname).none? {|c| c == "proxy.heroku.com"}
-      end
-    end
+  def custom?(dname)
+    HEROKU_DOMAINS.none?{|hd| dname.include?(hd)}
   end
 
-  # Returns true if the app's A records do _not_ point at Heroku's
-  # public IPs
-  def dns_a_record?(app_name)
-    return nil unless web_app?(app_name)
-    domain_names(app_name).all? do |dname|
-      Dns.a_records(dname).none? {|ip| HEROKU_IPS.include?(ip)}
-    end
+  def dns_cname?(app_name, dname)
+    s = Dns.cnames(dname)
+    s.any? && s.all? {|c| c == app_name+".herokuapp.com"}
+  end
+
+  def dns_alias?(app_name, dname)
+    s = Dns.aliases(dname)
+    s.any? && s.all? {|c| c == app_name+".herokuapp.com"}
   end
 
   def dns?(app_name)
-    dns_cname?(app_name) && dns_a_record?(app_name)
+    return nil unless web_app?(app_name)
+    custom_domain_names(app_name).all? do |dname|
+      dns_cname?(app_name, dname) || dns_alias?(app_name, dname)
+    end
   end
 
   def log_drains?(app_name)

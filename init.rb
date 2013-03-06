@@ -178,7 +178,7 @@ class Heroku::Command::Production < Heroku::Command::Base
       run_check("Cedar", "http://bit.ly/NIMhag") {cedar?(app)}
       run_check("Dyno Redundancy","http://bit.ly/SSHYev"){dyno_redundancy?(app)}
       run_check("Production Database", "http://bit.ly/PWsbrJ") {prod_db?(app)}
-      run_check("Follower Database", "http://bit.ly/MGsk39") {follower_db?(app)}
+      run_check("Follower Database", "http://bit.ly/XoOJJv") {follower_db?(app)}
       run_check("Cross-Region Follower", "http://bit.ly/Rjypmw") {cross_reg_follower?(app)}
       run_check("SSL Endpoint", "http://bit.ly/PfzI7x") {ssl_endpoint?(app)}
       run_check("DNS Configuration", "http://bit.ly/PfzI7x") {dns?(app)}

@@ -47,7 +47,6 @@ module Checks
   extend self
 
   HEROKU_DOMAINS = ["herokuapp.com", "herokussl.com", "heroku-shadowapp.com", "heroku-shadowssl.com"]
-  HEROKU_IPS = ["75.101.145.87", "75.101.163.44", "174.129.212.2", "50.16.232.130", "50.16.215.196"]
 
   # Attempt to access dynos of the app.
   # If the current user does not have access to the app,

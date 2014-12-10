@@ -83,7 +83,7 @@ module Checks
   end
 
   def cedar?(app_name)
-    api.get_app(app_name).body["stack"] == "cedar"
+    api.get_app(app_name).body["stack"] == "cedar-14"
   end
 
   def database_url(app_name)
